@@ -1,0 +1,93 @@
+# pipeline.yaml
+
+
+# data collection
+
+tasks:
+  ## dots metadata
+  - source: 00-data/dots/scripts/downLoadMetaData.R
+    executor: parallel
+    product:
+      nb: 00-data/dots/scripts/downLoadMetaData.ipynb
+      counterparts: 00-data/dots/metadata/counterparts.csv
+      countries: 00-data/dots/metadata/countries.csv
+
+  ## wto metadata
+  - source: 00-data/wto/scripts/wtoMetadata.py
+    executor: parallel
+    product:
+      nb: 00-data/wto/scripts/wtoMetadata.ipynb
+      datasets: 00-data/wto/metadata/datasets.csv
+      reportEcon: 00-data/wto/metadata/reportEcon.csv
+      partnerEconomies: 00-data/wto/metadata/partnerEconomies.csv
+      products: 00-data/wto/metadata/products.csv
+
+
+  ## dots data collect
+  - source: 00-data/dots/scripts/dataCollect.py
+    product:
+      nb: 00-data/dots/scripts/dataCollect.ipynb
+      files: 00-data/dots/raw/
+      DOTS: 00-data/dots/clean/DOTS.csv
+
+  ## wto data collect
+  ## annual bilateral product level data
+  - source: 00-data/wto/scripts/HSM_query.py
+    product:
+      nb: 00-data/wto/scripts/HSM_query.ipynb
+      hsm: 00-data/wto/raw/hsm/
+
+  ## wto data collect
+  ## monthly bilateral trade data
+  - source: 00-data/wto/scripts/ITSquery.py
+    product:
+      nb: 00-data/wto/scripts/HSM_query.ipynb
+      its: 00-data/wto/raw/its/
+
+# data cleaning
+
+  ## dots time series calculation
+  - source: 00-data/scripts/createTimeSeries.py
+    product:
+      nb: 00-data/scripts/createTimeSeries.ipynb
+      dotsTimeSeries: 00-data/dots/clean/dotsTimeSeries.csv
+      dotsTimeSeriesAll: 00-data/dots/clean/dotsTimeSeriesAll.csv
+
+# feature calculations
+
+  ## dots node network calculations
+  - source: 00-data/dots/scripts/calculateNetworkStats.py
+    product:
+      nb: 00-data/dots/scripts/calculateNetworkStats.ipynb
+      DOTSnetStats: 00-data/dots/clean/DOTSnetStats.csv
+
+  ## dots link network calculations
+  - source: 00-data/dots/scripts/linkFeatures.py
+    product:
+      nb: 00-data/dots/scripts/calculateNetworkStats.ipynb
+      DOTSnetStats: 00-data/dots/clean/DOTSnetStats.csv
+
+# time series analysis
+
+  # - source: 01-timeSeries/linearRegression.py
+  #   product:
+  #     nb: 01-timeSeries/linearRegression.ipynb
+
+# this took days to run, we'll not run it for now
+# this should be broken up, too much in one book
+  # - source: 01-timeSeries/xgboostDOTS.py
+  #   product:
+  #     nb: 01-timeSeries/xgboostDOTS.ipynb
+        # resultsDict: 00-data/model_output/xgboostResults.pickle
+        # pcaResultsDict: 00-data/model_output/xgboostPCAResults.pickle
+
+  - source: 01-timeSeries/xgboostWindow.py
+    product:
+      nb: 01-timeSeries/xgboostWindow.ipynb
+        # resultsDict: 00-data/model_output/xgboostResults.pickle
+        # pcaResultsDict: 00-data/model_output/xgboostPCAResults.pickle
+
+
+# eventual model comparisons?
+
+

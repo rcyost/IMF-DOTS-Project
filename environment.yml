@@ -1,0 +1,7 @@
+name: dots
+
+dependencies:
+  - r-base
+  - r-irkernel
+  - pip:
+    - ploomber

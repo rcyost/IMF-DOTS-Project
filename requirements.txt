@@ -1,0 +1,15 @@
+ploomber
+pandas
+numpy
+scikit-learn
+networkX
+sklearn
+statsmodels
+matplotlib
+tqdm
+dbnomics
+streamlit
+plotly
+xgboost
+pickle-mixin
+d3graph
